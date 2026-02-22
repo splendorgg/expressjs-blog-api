@@ -1,37 +1,15 @@
-import { body, validationResult } from "express-validator"
-import { AppError } from "#/utils/AppError.js"
+import { AppError } from "#/utils/AppError.js";
 
-export const validatePost = [
-    body("title")
-        .exists().withMessage("Title is required")
-        .bail()
-        .isString().withMessage("Title must be a string")
-        .bail()
-        .trim()
-        .notEmpty().withMessage("Title cannot be empty")
-        .isLength({ min: 1, max: 50 })
-        .withMessage("Title must be between 1 and 50 chars"),
-
-    body("content")
-        .exists().withMessage("Content is required")
-        .bail()
-        .isString().withMessage("Content must be a string")
-        .bail()
-        .trim()
-        .notEmpty().withMessage("Content cannot be empty")
-        .isLength({ min: 1, max: 1000 })
-        .withMessage("Content must be between 1 and 1000 chars"),
-
-    (req, res, next) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return next(new AppError("Validation failed", 400, errors.array()))
-        }
-        const { title, content } = req.body
-        req.body = { title, content }
-
+export const validate = (schema, property = "body") => (req, res, next) => {
+    try {
+        const parsed = schema.parse(req[property])
+        req[property] = parsed
         next()
+    } catch (err) {
+        const formatted = err.issues?.map(e => ({
+            field: e.path.join("."),
+            message: e.message
+        }))
+        next(new AppError("Validation failed", 400, formatted))
     }
-
-]
-
+}

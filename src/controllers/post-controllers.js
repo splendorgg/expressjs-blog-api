@@ -26,11 +26,7 @@ export const createNewPost = catchAsync(async (req, res) => {
 
 
 export const updatePostById = catchAsync(async (req, res) => {
-    const id = Number(req.params.id)
-    if (Number.isNaN(id)) {
-        throw new AppError("Invalid post id", 400)
-    }
-    const updated = updatePostService(id, req.body)
+    const updated = updatePostService(req.params.id, req.body)
     res.json(updated)
 }
 )

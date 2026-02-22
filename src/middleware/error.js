@@ -1,18 +1,13 @@
 export const errorHandler = (err, req, res, next) => {
     const statusCode = err.statusCode || 500
-    if (process.env.NODE_ENV === "development") {
-        res.status(statusCode).json({
-            message: err.message,
-            stack: err.stack,
-            ...(err.details && { errors: err.details })
-        })
-    }
-
+    const isDev = process.env.NODE_ENV === "development"
     res.status(statusCode).json({
-        message: statusCode >= 500 ?
-            "Internal Server Error"
-            : err.message,
-        ...(err.details && { errors: err.details })
+        message:
+            statusCode >= 500 && !isDev
+                ? "Internal Server Error"
+                : err.message,
+        ...(err.details && { errors: err.details }),
+        ...(isDev && { stack: err.stack })
     })
 }
 
