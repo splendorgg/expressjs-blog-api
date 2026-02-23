@@ -1,4 +1,4 @@
-import { AppError } from "#/utils/AppError.js";
+import { AppError } from "#/middleware/error.js"
 
 export const validate = (schema, property = "body") => (req, res, next) => {
     try {
@@ -10,6 +10,6 @@ export const validate = (schema, property = "body") => (req, res, next) => {
             field: e.path.join("."),
             message: e.message
         }))
-        next(new AppError("Validation failed", 400, formatted))
+        throw new AppError("Validation failed" + formatted, 400)
     }
 }

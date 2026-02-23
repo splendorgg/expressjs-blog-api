@@ -1,6 +1,6 @@
 import { createPostService, deletePostService, findAllPostsService, findPostByIdService, updatePostService } from "#/services/post-service.js"
 import { catchAsync } from "#/utils/catchAsync.js"
-import { AppError } from "#/utils/AppError.js"
+import { AppError } from "#/middleware/error.js"
 
 export const getPosts = catchAsync(async (req, res) => {
     const posts = findAllPostsService()
@@ -20,15 +20,14 @@ export const getPostById = catchAsync(async (req, res) => {
 
 export const createNewPost = catchAsync(async (req, res) => {
     const newPost = createPostService(req.body)
-    
-    console.log();
+
     res.status(201).json(newPost)
 }
 )
 
 
 export const updatePostById = catchAsync(async (req, res) => {
-    const updated = updatePostService(req.params.id, req.body)
+    const updated = await updatePostService(req.params.id, req.body)
     res.json(updated)
 }
 )

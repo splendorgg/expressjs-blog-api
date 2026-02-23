@@ -1,5 +1,5 @@
 import { prisma } from "#/lib/prisma.js"
-import { AppError } from "#/utils/AppError.js"
+import { AppError } from "#/middleware/error.js"
 
 let posts = [
     { id: 1, title: "First post", content: "Hello" },
@@ -8,7 +8,6 @@ let posts = [
 
 export const findAllPostsService = async () => {
     const users = await prisma.user.findMany();
-    console.log(users);
 }
 
 export const findPostByIdService = (id) => {
@@ -20,7 +19,6 @@ export const findPostByIdService = (id) => {
 }
 
 export const createPostService = async (data) => {
-
     const newPost = await prisma.post.create({
         data: {
             title: data.title,
@@ -33,16 +31,15 @@ export const createPostService = async (data) => {
     return newPost
 }
 
-export const updatePostService = (id, data) => {
-    const index = posts.findIndex(post => post.id === id)
-    if (index === -1) {
-        throw new AppError(`Could not find post by id ${id}`)
+export const updatePostService = async (id, data) => {
+    const exist = await prisma.post.findUnique({
+        where: {
+            id
+        }
+    })
+    if (!exist) {
+        throw new AppError(`Could not find post by id ${id}`, 400)
     }
-    posts[index] = {
-        ...posts[index],
-        ...data
-    }
-    return posts[index]
 }
 
 export const deletePostService = (id) => {
