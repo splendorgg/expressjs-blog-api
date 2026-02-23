@@ -16,7 +16,14 @@ export const createPostSchema = z.object({
 })
 
 
-export const updatePostSchema = createPostSchema.partial()
+export const updatePostSchema = createPostSchema
+    .partial()
+    .refine(
+        (data) => Object.keys(data).length > 0,
+        {
+            message: "At least one field must be provided"
+        }
+    )
 
 
 export const postIdParamSchema = z.object({

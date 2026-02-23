@@ -15,10 +15,12 @@
     "#/*": "./src/*"
   },
   "dependencies": {
+    "@prisma/client": "^7.4.1",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "pg": "^8.18.0",
     "pg-hstore": "^2.3.4",
+    "prisma": "^7.4.1",
     "sequelize": "^6.37.7",
     "zod": "^4.3.6"
   }
