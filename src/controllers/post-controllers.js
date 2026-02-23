@@ -1,6 +1,7 @@
 import { createPostService, deletePostService, findAllPostsService, findPostByIdService, updatePostService } from "#/services/post-service.js"
 import { catchAsync } from "#/utils/catchAsync.js"
 import { AppError } from "#/utils/AppError.js"
+import { Prisma } from "@prisma/client/extension"
 
 export const getPosts = catchAsync(async (req, res) => {
     const posts = findAllPostsService()
@@ -27,6 +28,8 @@ export const createNewPost = catchAsync(async (req, res) => {
 
 export const updatePostById = catchAsync(async (req, res) => {
     const updated = updatePostService(req.params.id, req.body)
+    const users = await Prisma.user.findMany();
+    console.log(users);
     res.json(updated)
 }
 )
