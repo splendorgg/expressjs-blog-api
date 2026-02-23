@@ -56,3 +56,6 @@ build/
 test-results/
 
 /src/generated/prisma
+
+
+/prisma/migrations

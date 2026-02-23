@@ -1,12 +1,14 @@
-
+import { prisma } from "#/lib/prisma.js"
 import { AppError } from "#/utils/AppError.js"
+
 let posts = [
     { id: 1, title: "First post", content: "Hello" },
     { id: 2, title: "Second post", content: "World" }
 ]
 
-export const findAllPostsService = () => {
-    return posts
+export const findAllPostsService = async () => {
+    const users = await prisma.user.findMany();
+    console.log(users);
 }
 
 export const findPostByIdService = (id) => {
@@ -17,12 +19,17 @@ export const findPostByIdService = (id) => {
     return singlePost
 }
 
-export const createPostService = (data) => {
-    const newPost = {
-        id: posts.length + 1,
-        ...data
-    }
-    posts.push(newPost)
+export const createPostService = async (data) => {
+
+    const newPost = await prisma.post.create({
+        data: {
+            title: data.title,
+            content: data.content,
+            user: {
+                connect: { id: "391c9199-d940-4cd2-92f0-08e149379f8d" }
+            }
+        }
+    })
     return newPost
 }
 
