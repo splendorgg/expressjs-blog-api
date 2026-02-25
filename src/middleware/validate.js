@@ -10,6 +10,6 @@ export const validate = (schema, property = "body") => (req, res, next) => {
             field: e.path.join("."),
             message: e.message
         }))
-        throw new AppError("Validation failed" + formatted, 400)
+        throw new AppError("Validation failed", 400, formatted)
     }
 }

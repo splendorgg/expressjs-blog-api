@@ -1,8 +1,9 @@
 export class AppError extends Error {
 
-    constructor(message, statusCode = 500) {
+    constructor(message, statusCode = 500, details = null) {
         super(message);
         this.statusCode = statusCode;
+        this.details = details
     }
 }
 
@@ -12,6 +13,7 @@ export const errorMiddleware = (err, req, res, next) => {
     if (err instanceof AppError) {
         return res.status(err.statusCode).json({
             message: err.message,
+            ...(err.details && { details: err.details }),
         });
     }
 

@@ -3,24 +3,23 @@ import { catchAsync } from "#/utils/catchAsync.js"
 import { AppError } from "#/middleware/error.js"
 
 export const getPosts = catchAsync(async (req, res) => {
-    const posts = findAllPostsService()
-    res.json(posts)
+    const posts = await findAllPostsService()
+    res.status(200).json(posts);
 }
 )
 
 export const getPostById = catchAsync(async (req, res) => {
-    const id = Number(req.params.id)
-    if (Number.isNaN(id)) {
-        throw new AppError("Invalid post id", 400)
+    const id = req.params.id
+    const post = await findPostByIdService(id)
+    if (!post) {
+        throw new AppError(`Could not find post by id ${id}`)
     }
-    const post = findPostByIdService(id)
-    res.json(post)
+    res.status(200).json(post)
 }
 )
 
 export const createNewPost = catchAsync(async (req, res) => {
-    const newPost = createPostService(req.body)
-
+    const newPost = await createPostService(req.body)
     res.status(201).json(newPost)
 }
 )
@@ -28,17 +27,14 @@ export const createNewPost = catchAsync(async (req, res) => {
 
 export const updatePostById = catchAsync(async (req, res) => {
     const updated = await updatePostService(req.params.id, req.body)
-    res.json(updated)
+    res.status(200).json(updated)
 }
 )
 
 
 export const deletePostById = catchAsync(async (req, res) => {
-    const id = Number(req.params.id)
-    if (Number.isNaN(id)) {
-        throw new AppError("Invalid post id", 400)
-    }
-    deletePostService(id)
+    const id = req.params.id
+    const deleted = await deletePostService(id)
     res.status(204).end()
 }
 )

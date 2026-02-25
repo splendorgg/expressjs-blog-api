@@ -23,14 +23,14 @@ app.use(
 // Routes
 app.use("/posts", postRoutes)
 
-// Error Handler
-app.use(notFound)
-app.use(errorMiddleware)
-
 // Health Check
 app.get("/health", (req, res) => {
     res.json({ status: "ok" })
 })
+// Error Handler
+app.use(notFound)
+app.use(errorMiddleware)
+
 
 
 export default app

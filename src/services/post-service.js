@@ -7,47 +7,63 @@ let posts = [
 ]
 
 export const findAllPostsService = async () => {
-    const users = await prisma.user.findMany();
+    const posts = await prisma.post.findMany();
+    return posts
 }
 
-export const findPostByIdService = (id) => {
-    const singlePost = posts.find((post) => post.id === id)
-    if (!singlePost) {
-        throw new AppError(`Could not find post by id ${id}`)
-    }
-    return singlePost
-}
-
-export const createPostService = async (data) => {
-    const newPost = await prisma.post.create({
-        data: {
-            title: data.title,
-            content: data.content,
-            user: {
-                connect: { id: "391c9199-d940-4cd2-92f0-08e149379f8d" }
-            }
-        }
-    })
-    return newPost
-}
-
-export const updatePostService = async (id, data) => {
-    const exist = await prisma.post.findUnique({
+export const findPostByIdService = async (id) => {
+    const singlePost = await prisma.post.findUnique({
         where: {
             id
         }
     })
-    if (!exist) {
-        throw new AppError(`Could not find post by id ${id}`, 400)
+    return singlePost
+}
+
+export const createPostService = async (data) => {
+    try {
+
+        const newPost = await prisma.post.create({
+            data: {
+                title: data.title,
+                content: data.content,
+                user: {
+                    connect: { id: "391c9199-d940-4cd2-92f0-08e149379f8d" }
+                }
+            }
+        })
+        return newPost
+    } catch (error) {
+        throw new AppError(error.message || "Could not create post", 500);
     }
 }
 
-export const deletePostService = (id) => {
-    const index = posts.findIndex(post => post.id === id)
-    if (index === -1) {
-        throw new AppError(`Could not find post by id ${id}`)
+export const updatePostService = async (id, data) => {
+    try {
+        const updatedPost = await prisma.post.update({
+            where: { id },
+            data
+        })
+        return updatedPost
+    } catch (error) {
+        if (error.code === "P2025") {
+            throw new AppError(`Could not find post by id ${id}`, 404);
+        }
+        throw new AppError(error.message || "Could not update post", 500);
     }
-    const deleted = posts[index]
-    posts = posts.filter(post => post.id !== id)
-    return deleted
+
+}
+
+export const deletePostService = async (id) => {
+    try {
+        const deletedPost = await prisma.post.delete({
+            where: { id },
+        })
+        return deletedPost
+    } catch (error) {
+        if (error.code === "P2025") {
+            throw new AppError(`Could not find post with id ${id}`, 404);
+        }
+        throw new AppError(error.message || "Could not delete post", 500);
+    }
 }
