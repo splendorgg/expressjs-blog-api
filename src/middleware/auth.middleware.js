@@ -22,3 +22,4 @@ export async function authMiddleware(req, res, next) {
         throw new AppError('Unauthorized — Invalid or expired token', 401);
     }
 }
+

@@ -60,3 +60,10 @@ export async function createKeycloakUser(adminToken, data) {
     return userId
 }
 
+export async function deleteKeycloakUser(adminToken, userId) {
+    await axios.delete(`${process.env.KEYCLOAK_BASE}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${userId}`, {
+        headers: {
+            Authorization: `Bearer ${adminToken}`,
+        },
+    });
+}
