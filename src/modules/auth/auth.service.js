@@ -1,5 +1,6 @@
 import { createKeycloakUser, deleteKeycloakUser, getAdminToken } from "#/modules/auth/keycloak.service.js";
 import { prisma } from "#/lib/prisma.js"
+import { AppError } from "#/middleware/error.js";
 
 
 export async function register(dto) {
@@ -22,12 +23,13 @@ export async function register(dto) {
                 email: userData.email,
                 firstName: userData.firstName,
                 lastName: userData.lastName,
-                role: userData.role ?? "USER",
+                role: "USER",
             }
         })
         return user
     } catch (error) {
-        await deleteKeycloakUser(adminToken, keycloakUserId);
+        const freshToken = await getAdminToken();
+        await deleteKeycloakUser(freshToken, keycloakUserId);
         throw error;
     }
 }
