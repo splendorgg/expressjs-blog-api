@@ -18,12 +18,14 @@ model Post {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  posts     Post[]
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  keycloakId String   @unique
+  email      String   @unique
+  firstName  String
+  lastName   String
+  role       Role     @default(USER)
+  posts      Post[]
+  createdAt  DateTime @default(now())
 }
 
 enum Role {

@@ -5,7 +5,6 @@ import { AppError } from "#/middleware/error.js";
 
 export async function register(dto) {
     const { password, ...userData } = dto
-
     const existing = await prisma.user.findUnique({
         where: { email: userData.email }
     });

@@ -6,7 +6,7 @@ export async function getAdminToken() {
     const response = await axios.post(
         `${process.env.KEYCLOAK_BASE}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
         new URLSearchParams({
-            grant_type: 'client-credentials',
+            grant_type: 'client_credentials',
             client_id: process.env.KEYCLOAK_CLIENT_ID,
             client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
         }),
@@ -28,7 +28,7 @@ export async function createKeycloakUser(adminToken, data) {
             email: data.email,
             firstName: data.firstName,
             lastName: data.lastName,
-            enabled: false,
+            enabled: true,
             emailVerified: false,
             requiredActions: [],
             credentials: [{
@@ -48,7 +48,8 @@ export async function createKeycloakUser(adminToken, data) {
     )
 
     if (response.status !== 201) {
-        throw new AppError('Keycloak user creation failed', 400);
+        const errorMessage = response.data?.errorMessage || response.data?.error || 'Keycloak user creation failed';
+        throw new AppError(errorMessage, response.status || 400);
     }
 
     const location = response.headers.location;
