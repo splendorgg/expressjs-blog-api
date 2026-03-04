@@ -4,17 +4,11 @@ import { AppError } from "#/middleware/error.js";
 
 
 export async function register(dto) {
-    const { password, ...userData } = dto
-    const existing = await prisma.user.findUnique({
-        where: { email: userData.email }
-    });
-    if (existing) throw new AppError("Email already exists", 400);
+    const { password, ...userData } = dto;
 
-    const adminToken = await getAdminToken()
-    const keycloakUserId = await createKeycloakUser(adminToken, dto)
-    if (!keycloakUserId) {
-        throw new AppError("Keycloak user creation failed", 500);
-    }
+    const adminToken = await getAdminToken();
+    const keycloakUserId = await createKeycloakUser(adminToken, dto);
+
     try {
         const user = await prisma.user.create({
             data: {
@@ -24,12 +18,15 @@ export async function register(dto) {
                 lastName: userData.lastName,
                 role: "USER",
             }
-        })
-        return user
+        });
+        return user;
     } catch (error) {
         const freshToken = await getAdminToken();
         await deleteKeycloakUser(freshToken, keycloakUserId);
+
+        if (error.code === 'P2002') {
+            throw new AppError("Email already exists in database", 400);
+        }
         throw error;
     }
 }
-
