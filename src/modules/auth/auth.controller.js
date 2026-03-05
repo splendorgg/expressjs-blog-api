@@ -5,8 +5,9 @@ export const AuthController = {
         const user = await register(req.body)
         res.status(201).json(user);
 
-    }
+    },
     login: async (req, res) => {
-        
+        const token = await login(req.body)
+        res.json(token)
     }
 }
