@@ -1,5 +1,5 @@
 import { AppError } from "#/middleware/error.js"
-import { verifyToken } from "#s/utils/auth";
+import { verifyToken } from "#/utils/auth.js";
 
 export async function authMiddleware(req, res, next) {
     try {
