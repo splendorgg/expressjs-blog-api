@@ -49,7 +49,11 @@ export async function createKeycloakUser(adminToken, data) {
     )
 
     if (response.status !== 201) {
-        const errorMessage = response.data?.errorMessage || response.data?.error || 'Keycloak user creation failed';
+        const errorMessage =
+            response.data?.errorMessage ||
+            response.data?.error ||
+            response.statusText ||
+            "Keycloak user creation failed";
         throw new AppError(errorMessage, response.status || 400);
     }
 
@@ -63,7 +67,7 @@ export async function createKeycloakUser(adminToken, data) {
 }
 
 
-export async function getKeyCloakToken(email, password) {
+export async function getKeycloakToken(email, password) {
     try {
         const response = await axios.post(
             `${process.env.KEYCLOAK_BASE}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
@@ -91,6 +95,29 @@ export async function getKeyCloakToken(email, password) {
             throw new AppError('Unable to connect to Keycloak', 503);
         }
         throw err;
+    }
+}
+
+export async function logoutKeycloakUser(refreshToken) {
+    try {
+        await axios.post(
+            `${process.env.KEYCLOAK_BASE}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/logout`,
+            new URLSearchParams({
+                client_id: process.env.KEYCLOAK_CLIENT_ID,
+                client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
+                refresh_token: refreshToken,
+            }),
+            { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+        );
+        return true;
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            throw new AppError(
+                err.response?.data?.error_description || 'Keycloak logout failed',
+                err.response?.status || 400
+            );
+        }
+        throw new AppError('Keycloak logout failed', 400);
     }
 }
 

@@ -1,4 +1,4 @@
-import { createKeycloakUser, deleteKeycloakUser, getAdminToken, getKeyCloakToken } from "#/modules/auth/keycloak.service.js";
+import { createKeycloakUser, deleteKeycloakUser, getAdminToken, getKeycloakToken, logoutKeycloakUser } from "#/modules/auth/keycloak.service.js";
 import { prisma } from "#/lib/prisma.js"
 import { AppError } from "#/middleware/error.js";
 
@@ -34,10 +34,9 @@ export async function register(dto) {
 
 export async function login(dto) {
     const { email, password } = dto
-    const token = await getKeyCloakToken(email, password)
+    const token = await getKeycloakToken(email, password)
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) throw new AppError('User not found', 404);
-
     return {
         user, token: {
             access_token: token.access_token,
@@ -46,4 +45,10 @@ export async function login(dto) {
             token_type: token.token_type
         }
     }
+}
+
+
+export async function logout(refreshToken) {
+    await logoutKeycloakUser(refreshToken)
+    return true
 }
