@@ -7,6 +7,7 @@ import { AuthController } from "#/modules/auth/auth.controller.js";
 const router = Router()
 
 router.post('/register', validate(registerUserValidatorSchema), AuthController.register)
+router.post('/login', AuthController.login)
 
 
 

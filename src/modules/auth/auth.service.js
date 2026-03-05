@@ -30,3 +30,13 @@ export async function register(dto) {
         throw error;
     }
 }
+
+
+export async function login(dto) {
+    const { email, password } = dto
+    const token = getKeyCloakToken(email, password)
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) throw new AppError('User not found', 404);
+
+    return { token, user }
+}

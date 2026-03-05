@@ -61,6 +61,38 @@ export async function createKeycloakUser(adminToken, data) {
     return userId
 }
 
+
+export async function getKeyCloakToken(email, password) {
+    try {
+        const response = await axios.post(
+            `${process.env.KEYCLOAK_BASE}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
+            new URLSearchParams({
+                grant_type: 'password',
+                client_id: process.env.KEYCLOAK_CLIENT_ID,
+                client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
+                username: email,
+                password: password
+            }),
+            {
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                validateStatus: () => true
+            }
+        );
+
+        if (response.status !== 200) {
+            const msg = response.data?.error_description || 'Login failed';
+            throw new AppError(msg, 401);
+        }
+
+        return response.data;
+    } catch (err) {
+        if (err.isAxiosError) {
+            throw new AppError('Unable to connect to Keycloak', 503);
+        }
+        throw err;
+    }
+}
+
 export async function deleteKeycloakUser(adminToken, userId) {
     await axios.delete(`${process.env.KEYCLOAK_BASE}/admin/realms/${process.env.KEYCLOAK_REALM}/users/${userId}`, {
         headers: {
@@ -68,3 +100,5 @@ export async function deleteKeycloakUser(adminToken, userId) {
         },
     });
 }
+
+
