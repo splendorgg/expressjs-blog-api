@@ -1,5 +1,6 @@
-export const notFound = (req, res, next) => {
-    const error = new Error('Not Found')
-    error.statusCode = 404
-    next(error)
+import { AppError } from "#/middleware/error.js"
+
+export const notFound = (req, res) => {
+    throw new AppError(`Route not found: ${req.originalUrl}`, 404);
+
 }
