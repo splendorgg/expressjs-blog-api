@@ -53,25 +53,20 @@ model Todo {
 }
 
 model Habit {
-  id          String            @id @default(uuid())
+  id          String    @id @default(uuid())
   userId      String
   name        String
   description String?
   frequency   Int
-  streak      Int               @default(0)
+  streak      Int       @default(0)
   lastDone    DateTime?
-  expReward   Int               @default(5)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  completions HabitCompletion[]
-  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+  expReward   Int       @default(5)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isCompleted Boolean   @default(false)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-model HabitCompletion {
-  id        String   @id @default(uuid())
-  habitId   String
-  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  @@index([userId])
 }
 
 enum Role {

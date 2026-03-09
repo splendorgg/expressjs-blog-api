@@ -129,4 +129,28 @@ export async function deleteKeycloakUser(adminToken, userId) {
     });
 }
 
+//todo frontendde silent renew axios
+export async function refreshAccessToken(refreshToken) {
+    try {
+        await axios.post(
+            `${process.env.KEYCLOAK_BASE}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
+            new URLSearchParams({
+                grant_type: 'refresh_token',
+                client_id: process.env.KEYCLOAK_CLIENT_ID,
+                client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
+                refresh_token: refreshToken,
+            }),
+            { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+        );
+        return true;
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            throw new AppError(
+                err.response?.data?.error_description || 'Keycloak token refresh failed',
+                err.response?.status || 401
+            );
+        }
+        throw new AppError('Keycloak token refresh failed', 401);
+    }
+}
 
