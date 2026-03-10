@@ -132,7 +132,7 @@ export async function deleteKeycloakUser(adminToken, userId) {
 //todo frontendde silent renew axios
 export async function refreshAccessToken(refreshToken) {
     try {
-        await axios.post(
+        const response = await axios.post(
             `${process.env.KEYCLOAK_BASE}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
             new URLSearchParams({
                 grant_type: 'refresh_token',
@@ -142,7 +142,7 @@ export async function refreshAccessToken(refreshToken) {
             }),
             { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
         );
-        return true;
+        return response.data;
     } catch (err) {
         if (axios.isAxiosError(err)) {
             throw new AppError(

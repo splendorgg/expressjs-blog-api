@@ -1,6 +1,6 @@
 import express from "express"
 import postRoutes from "#/routes/post-routes.js"
-import userRoutes from "#/routes/user.routes.js"
+import authRotes from "#/routes/auth.routes.js"
 import { errorMiddleware } from "#/middleware/error.js"
 import { notFound } from "#/middleware/notFound.js"
 import morgan from "morgan"
@@ -45,7 +45,7 @@ app.use(limiter)
 
 // Routes
 app.use("/posts", postRoutes)
-app.use("/users", userRoutes)
+app.use("/users", authRotes)
 
 // Health check
 app.get("/health", (req, res) => {
