@@ -136,7 +136,38 @@ exports.Prisma.UserScalarFieldEnum = {
   firstName: 'firstName',
   lastName: 'lastName',
   role: 'role',
-  createdAt: 'createdAt'
+  level: 'level',
+  exp: 'exp',
+  avatar: 'avatar',
+  streak: 'streak',
+  lastLogin: 'lastLogin',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TodoScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  description: 'description',
+  completed: 'completed',
+  expReward: 'expReward',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HabitScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  description: 'description',
+  frequency: 'frequency',
+  streak: 'streak',
+  lastDone: 'lastDone',
+  expReward: 'expReward',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isCompleted: 'isCompleted'
 };
 
 exports.Prisma.SortOrder = {
@@ -148,14 +179,18 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-exports.Role = exports.$Enums.Role = {
-  USER: 'USER',
-  ADMIN: 'ADMIN'
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
+
 
 exports.Prisma.ModelName = {
   Post: 'Post',
-  User: 'User'
+  User: 'User',
+  Todo: 'Todo',
+  Habit: 'Habit'
 };
 
 /**

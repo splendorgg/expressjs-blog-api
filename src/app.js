@@ -7,6 +7,7 @@ import morgan from "morgan"
 import helmet from "helmet"
 import cors from "cors"
 import rateLimit from "express-rate-limit"
+import cookieParser from "cookie-parser"
 
 const app = express()
 
@@ -22,6 +23,7 @@ app.use(cors())
 // Body parser
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser());
 
 // Logger
 app.use(

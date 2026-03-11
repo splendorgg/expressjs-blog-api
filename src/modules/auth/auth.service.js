@@ -1,6 +1,7 @@
 import { createKeycloakUser, deleteKeycloakUser, getAdminToken, getKeycloakToken, logoutKeycloakUser } from "#/modules/auth/keycloak.service.js";
 import { prisma } from "#/lib/prisma.js"
 import { AppError } from "#/middleware/error.js";
+import { decodeJwt } from "jose";
 
 
 export async function register(dto) {
@@ -35,20 +36,44 @@ export async function register(dto) {
 export async function login(dto) {
     const { email, password } = dto
     const token = await getKeycloakToken(email, password)
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) throw new AppError('User not found', 404);
+    if (!token) throw new AppError("Invalid email or password", 401);
+
+    const payload = decodeJwt(token.access_token);
+
+    let user = await prisma.user.findUnique({
+        where: { keycloakId: payload.sub }
+    });
+
+    if (!user) {
+
+        user = await prisma.user.create({
+            data: {
+                keycloakId: payload.sub,
+                email: payload.email,
+                firstName: payload.given_name,
+                lastName: payload.family_name,
+                role: "USER"
+            }
+        });
+
+    }
+    user = await prisma.user.update({
+        where: { keycloakId: payload.sub },
+        data: { lastLogin: new Date() }
+    });
+
     return {
-        user, token: {
-            access_token: token.access_token,
-            refresh_token: token.refresh_token,
-            expires_in: token.expires_in,
-            token_type: token.token_type
-        }
+        user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            level: user.level,
+            exp: user.exp,
+            avatar: user.avatar
+        },
+        token
     }
 }
 
 
-export async function logout(refreshToken) {
-    await logoutKeycloakUser(refreshToken)
-    return true
-}

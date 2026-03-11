@@ -91,6 +91,7 @@ export async function getKeycloakToken(email, password) {
 
         return response.data;
     } catch (err) {
+        if (err instanceof AppError) throw err;
         if (err.isAxiosError) {
             throw new AppError('Unable to connect to Keycloak', 503);
         }
