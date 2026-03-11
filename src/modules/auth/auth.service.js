@@ -1,6 +1,6 @@
 import { createKeycloakUser, deleteKeycloakUser, getAdminToken, getKeycloakToken, logoutKeycloakUser } from "#/modules/auth/keycloak.service.js";
 import { prisma } from "#/lib/prisma.js"
-import { AppError } from "#/middleware/error.js";
+import { AppError } from "#/middleware/error.middleware.js";
 import { decodeJwt } from "jose";
 
 

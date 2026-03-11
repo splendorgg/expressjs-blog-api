@@ -1,5 +1,5 @@
 import { prisma } from "#/lib/prisma.js"
-import { AppError } from "#/middleware/error.js"
+import { AppError } from "#/middleware/error.middleware.js"
 
 let posts = [
     { id: 1, title: "First post", content: "Hello" },

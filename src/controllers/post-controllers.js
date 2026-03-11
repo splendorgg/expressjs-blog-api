@@ -1,6 +1,6 @@
 import { createPostService, deletePostService, findAllPostsService, findPostByIdService, updatePostService } from "#/services/post-service.js"
 import { catchAsync } from "#/utils/catchAsync.js"
-import { AppError } from "#/middleware/error.js"
+import { AppError } from "#/middleware/error.middleware.js"
 
 export const getPosts = catchAsync(async (req, res) => {
     const posts = await findAllPostsService()

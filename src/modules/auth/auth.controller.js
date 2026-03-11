@@ -1,7 +1,7 @@
 import { login, register } from "#/modules/auth/auth.service.js"
 import { logoutKeycloakUser, refreshAccessToken } from "#/modules/auth/keycloak.service.js"
 import { catchAsync } from "#/utils/catchAsync.js";
-import { AppError } from "#/middleware/error.js";
+import { AppError } from "#/middleware/error.middleware.js";
 
 export const AuthController = {
     register: catchAsync(async (req, res) => {

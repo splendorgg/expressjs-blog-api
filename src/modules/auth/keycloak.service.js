@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AppError } from "#/middleware/error.js"
+import { AppError } from "#/middleware/error.middleware.js"
 
 
 

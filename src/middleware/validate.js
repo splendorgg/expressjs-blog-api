@@ -1,4 +1,4 @@
-import { AppError } from "#/middleware/error.js"
+import { AppError } from "#/middleware/error.middleware.js"
 import { ZodError } from "zod";
 
 export const validate = (schema, property = "body") =>
