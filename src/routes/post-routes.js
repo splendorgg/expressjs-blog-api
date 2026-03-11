@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createNewPost, deletePostById, getPostById, getPosts, updatePostById } from "#/controllers/post-controllers.js";
-import { validate } from "#/middleware/validate.js";
+import { validate } from "#/middleware/validate.middleware.js";
 import { updatePostSchema, upsertPostSchema } from "#/schemas/post.schema.js";
 import { authMiddleware } from "#/middleware/auth.middleware.js";
 
