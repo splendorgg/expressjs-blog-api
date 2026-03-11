@@ -19,8 +19,8 @@ export async function verifyToken(token) {
     const KEYCLOAK_CLIENT = process.env.KEYCLOAK_CLIENT_ID
     const { payload } = await jwtVerify(token, getJWKS(), {
         issuer: `${KEYCLOAK_BASE}/realms/${KEYCLOAK_REALM}`,
-        audience: KEYCLOAK_CLIENT,
     })
+    if (payload.azp !== KEYCLOAK_CLIENT) throw new AppError('Unauthorized', 401)
 
     return payload
 }
