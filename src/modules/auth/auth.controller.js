@@ -2,6 +2,7 @@ import { login, register } from "#/modules/auth/auth.service.js"
 import { logoutKeycloakUser, refreshAccessToken } from "#/modules/auth/keycloak.service.js"
 import { catchAsync } from "#/utils/catchAsync.js";
 import { AppError } from "#/middleware/error.middleware.js";
+import { updateStreak } from "#/modules/gamification/streak.service.js";
 
 export const AuthController = {
     register: catchAsync(async (req, res) => {
@@ -11,6 +12,7 @@ export const AuthController = {
     }),
     login: catchAsync(async (req, res) => {
         const result = await login(req.body);
+        await updateStreak(result.user.id)
 
         res.cookie('refreshToken', result.token.refresh_token, {
             httpOnly: true,

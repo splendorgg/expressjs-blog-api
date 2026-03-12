@@ -70,7 +70,8 @@ export async function login(dto) {
             lastName: user.lastName,
             level: user.level,
             exp: user.exp,
-            avatar: user.avatar
+            avatar: user.avatar,
+            streak: user.streak,
         },
         token
     }

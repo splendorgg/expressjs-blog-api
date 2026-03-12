@@ -11,3 +11,4 @@ export async function getUserByKeycloakId(keycloakId) {
     }
     return user
 }
+
