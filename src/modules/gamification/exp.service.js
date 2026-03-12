@@ -11,13 +11,16 @@ export const XP_REWARDS = {
 export async function grantXP(userId, event, streakBonus = true) {
     const user = await prisma.user.findUnique({ where: { id: userId } })
     if (!user) throw new AppError("User not found")
-    console.log('event:', event, 'streak:', user.streak)
-    let xp = XP_REWARDS[event] || 10
+
+    let baseXP = XP_REWARDS[event] || 10
+    let finalXP = baseXP
+
     if (streakBonus && event === "LOGIN" && user.streak && user.streak > 1) {
-        xp += Math.round(user.streak * 1.02)
+        const multiplier = 1 + user.streak * 0.05
+        finalXP = Math.round(baseXP * multiplier)
     }
 
-    let totalXP = user.exp + xp
+    let totalXP = user.exp + finalXP
     let level = user.level
     let requiredXP = getRequiredXP(level)
 

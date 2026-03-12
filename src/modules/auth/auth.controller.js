@@ -21,7 +21,10 @@ export const AuthController = {
         });
 
         const updatedUser = await updateStreak(result.user.id);
-        const userWithXP = await grantXP(updatedUser.id, "LOGIN");
+        let userWithXP = updatedUser;
+        if (updatedUser.streak !== result.user.streak) {
+            userWithXP = await grantXP(updatedUser.id, "LOGIN");
+        }
 
         res.status(200).json({
             user: userWithXP,
