@@ -3,6 +3,7 @@ import { logoutKeycloakUser, refreshAccessToken } from "#/modules/auth/keycloak.
 import { catchAsync } from "#/utils/catchAsync.js";
 import { AppError } from "#/middleware/error.middleware.js";
 import { updateStreak } from "#/modules/gamification/streak.service.js";
+import { grantXP, XP_REWARDS } from "#/modules/gamification/exp.service.js";
 
 export const AuthController = {
     register: catchAsync(async (req, res) => {
@@ -12,8 +13,6 @@ export const AuthController = {
     }),
     login: catchAsync(async (req, res) => {
         const result = await login(req.body);
-        await updateStreak(result.user.id)
-
         res.cookie('refreshToken', result.token.refresh_token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -21,8 +20,11 @@ export const AuthController = {
             maxAge: result.token.refresh_expires_in * 1000
         });
 
+        const updatedUser = await updateStreak(result.user.id);
+        const userWithXP = await grantXP(updatedUser.id, "LOGIN");
+
         res.status(200).json({
-            user: result.user,
+            user: userWithXP,
             token: {
                 access_token: result.token.access_token,
                 expires_in: result.token.expires_in,
